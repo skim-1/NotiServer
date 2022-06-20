@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import cross_origin
 import json
-from pred_spam import get_score as get_spam
-from pred_news import get_score as get_news
 import tensorflow as tf
 import tensorflow_hub as tf_hub
 import tensorflow_text as tf_text
@@ -10,9 +8,23 @@ import openai
 
 app = Flask(__name__)
 spmodel = tf.keras.models.load_model('./spamModel.h5', custom_objects={'KerasLayer': tf_hub.KerasLayer})
-nmodel = tf.keras.models.load_model('./newModel.h5', custom_objects={'KerasLayer': tf_hub.KerasLayer})
+nmodel = tf.keras.models.load_model('./newsModel.h5', custom_objects={'KerasLayer': tf_hub.KerasLayer})
 
 openai.api_key = "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"
+
+def get_news(text):
+    predictions = nmodel.predict([text])
+    return predictions[0]
+
+
+def get_spam(text):
+    predictions = nmodel.predict([text])
+    return predictions[0]
+
+
+def clsfy(text):
+    predictions = nmodel.predict([text])
+    return predictions[0]
 
 
 def display_score(raw_score):
